@@ -9,7 +9,8 @@ from matplotlib import cm
 from matplotlib.colors import Normalize
 
 import numpy as np
-from divHretention import plot_Tc_map_with_subplots, plot_along_divertor, extract_data, compute_c_max, compute_inventory
+from divHretention import plot_Tc_map_with_subplots, plot_along_divertor, \
+    Exposition, compute_c_max, compute_inventory
 import divHretention
 from scipy.interpolate import interp1d
 
@@ -209,13 +210,15 @@ plt.savefig('../Figures/ITER/inventory_at_strike_points.svg')
 ratios = [[], []]
 for i, results in enumerate([filenames_inner, filenames_outer]):
     for filename in results:
-        R, Z, arc_length, E_ion, E_atom, ion_flux, \
-            atom_flux, net_heat_flux, angles_ion, angles_atom, data = \
-            extract_data(filename)
-        T = 1.1e-4*net_heat_flux + 323
+        my_exp = divHretention.Exposition(filename, filetype="ITER")
+
+        T = 1.1e-4*my_exp.net_heat_flux + 323
         c_max, c_max_ions, c_max_atoms = compute_c_max(
-            T, E_ion, E_atom, angles_ion, angles_atom,
-            ion_flux, atom_flux, full_export=True)
+            T,
+            my_exp.E_ion, my_exp.E_atom,
+            my_exp.angles_ions, my_exp.angles_atoms,
+            my_exp.ion_flux, my_exp.atom_flux,
+            full_export=True)
 
         inner_sp_loc_index = np.where(res.temperature == res.temperature.max())[0][0]
 
