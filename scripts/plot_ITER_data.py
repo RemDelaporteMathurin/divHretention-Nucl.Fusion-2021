@@ -9,8 +9,8 @@ from matplotlib import cm
 from matplotlib.colors import Normalize
 
 import numpy as np
-from main import plot_Tc_map_with_subplots, plot_along_divertor, extract_data, compute_c_max, compute_inventory
-import main
+from divHretention import plot_Tc_map_with_subplots, plot_along_divertor, extract_data, compute_c_max, compute_inventory
+import divHretention
 from scipy.interpolate import interp1d
 
 plt.rc('text', usetex=True)
@@ -54,20 +54,20 @@ sm = plt.cm.ScalarMappable(cmap=colormap, norm=Normalize(vmin=min(divertor_press
 colours = [colormap((P - min(divertor_pressure))/max(divertor_pressure)) for P in divertor_pressure]
 
 filenames_inner = [
-    "data/exposure_conditions_divertor/ITER/{}/{}_inner_target.csv".format(number, number) for number in numbers
+    "../data/exposure_conditions_divertor/ITER/{}/{}_inner_target.csv".format(number, number) for number in numbers
     ]
 filenames_outer = [
-    "data/exposure_conditions_divertor/ITER/{}/{}_outer_target.csv".format(number, number) for number in numbers
+    "../data/exposure_conditions_divertor/ITER/{}/{}_outer_target.csv".format(number, number) for number in numbers
     ]
 
 res_inner, res_outer = [], []
 
 for filename in filenames_inner:
-    res = main.process_file(filename)
+    res = divHretention.process_file(filename, filetype="ITER")
     res_inner.append(res)
 
 for i, filename in enumerate(filenames_outer):
-    res = main.process_file(filename)
+    res = divHretention.process_file(filename, filetype="ITER")
     res_outer.append(res)
 
 # compute total inventory
@@ -112,8 +112,8 @@ plt.ylim(bottom=0)
 plt.xlim(left=divertor_pressure[0], right=divertor_pressure[-1] + 1.5)
 plt.annotate("IVT", (divertor_pressure[-1]+0.2, 0.4e22), color=line_inner.get_color(), weight="bold")
 plt.annotate("OVT", (divertor_pressure[-1]+0.2, 0.6e22), color=line_tot.get_color(), weight="bold")
-plt.savefig('Figures/ITER/inventory_vs_divertor_pressure.pdf')
-plt.savefig('Figures/ITER/inventory_vs_divertor_pressure.svg')
+plt.savefig('../Figures/ITER/inventory_vs_divertor_pressure.pdf')
+plt.savefig('../Figures/ITER/inventory_vs_divertor_pressure.svg')
 
 # ###### plot exposure conditions along divertor
 
@@ -136,8 +136,8 @@ my_plot_inner.axs[0].annotate("IVT", (0.5, 800))
 plt.colorbar(
     sm, label="Divertor neutral pressure (Pa)",
     ax=my_plot_inner.axs)
-plt.savefig('Figures/ITER/inventory_along_inner_divertor.pdf')
-plt.savefig('Figures/ITER/inventory_along_inner_divertor.svg')
+plt.savefig('../Figures/ITER/inventory_along_inner_divertor.pdf')
+plt.savefig('../Figures/ITER/inventory_along_inner_divertor.svg')
 
 my_plot_outer = plot_along_divertor(
     filenames=filenames_outer,
@@ -149,8 +149,8 @@ my_plot_outer.axs[0].annotate("OVT", (0.5, 1500))
 plt.colorbar(
     sm, label="Divertor neutral pressure (Pa)",
     ax=my_plot_outer.axs)
-plt.savefig('Figures/ITER/inventory_along_outer_divertor.pdf')
-plt.savefig('Figures/ITER/inventory_along_outer_divertor.svg')
+plt.savefig('../Figures/ITER/inventory_along_outer_divertor.pdf')
+plt.savefig('../Figures/ITER/inventory_along_outer_divertor.svg')
 
 # ###### compute inventory as function of x
 fig, axs = plt.subplots(1, 2, sharey=True, figsize=(6.4, 3))
@@ -174,8 +174,8 @@ fig.colorbar(sm, label="Divertor neutral pressure (Pa)")
 plt.tight_layout()
 plt.subplots_adjust(wspace=0)
 plt.ylim(0, 1)
-plt.savefig('Figures/ITER/cumulative_inventory.pdf')
-plt.savefig('Figures/ITER/cumulative_inventory.svg')
+plt.savefig('../Figures/ITER/cumulative_inventory.pdf')
+plt.savefig('../Figures/ITER/cumulative_inventory.svg')
 
 # ###### plot inventory at SPs
 plt.figure(figsize=(6.4, 3))
@@ -200,8 +200,8 @@ plt.ylabel("H inventory (H m$^{-1}$)")
 plt.xlim(left=0, right=divertor_pressure[-1] + 4.5)
 plt.ylim(bottom=0)
 plt.tight_layout()
-plt.savefig('Figures/ITER/inventory_at_strike_points.pdf')
-plt.savefig('Figures/ITER/inventory_at_strike_points.svg')
+plt.savefig('../Figures/ITER/inventory_at_strike_points.pdf')
+plt.savefig('../Figures/ITER/inventory_at_strike_points.svg')
 
 # ###### plot neutral contribution
 ratios = [[], []]
@@ -256,7 +256,7 @@ plt.ylabel(r"$c_{\mathrm{surface}, \mathrm{ions}} / c_\mathrm{surface}$")
 plt.ylim(bottom=0, top=1)
 plt.yticks(ticks=[0, 0.5, 1])
 plt.tight_layout()
-plt.savefig('Figures/ITER/ratio_ions_atoms.pdf')
-plt.savefig('Figures/ITER/ratio_ions_atoms.svg')
+plt.savefig('../Figures/ITER/ratio_ions_atoms.pdf')
+plt.savefig('../Figures/ITER/ratio_ions_atoms.svg')
 
 plt.show()
