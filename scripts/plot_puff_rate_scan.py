@@ -1,8 +1,8 @@
 """
 This script has to be executed at the root of the directory
 """
-from main import extract_data, process_file, compute_c_max, compute_inventory
-from main import plot_along_divertor
+from divHretention import process_file, compute_c_max, compute_inventory, \
+    plot_along_divertor, Exposition
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
@@ -30,13 +30,14 @@ colormap = cm.viridis
 sm = plt.cm.ScalarMappable(cmap=colormap, norm=Normalize(vmin=min(Ps), vmax=max(Ps)))
 colours = [colormap((P - min(Ps))/max(Ps)) for P in Ps]
 
-filenames = ["data/exposure_conditions_divertor/WEST/West-LSN-P{:.1e}-IP{:.3}MW.csv".format(P, input_power) for P in Ps]
+filenames = ["../data/exposure_conditions_divertor/WEST/West-LSN-P{:.1e}-IP{:.3}MW.csv".format(P, input_power) for P in Ps]
 
 time = 1e7  # s
 # #### plot inventory along divertor
 
 my_plot = plot_along_divertor(
     filenames,
+    filetypes="WEST",
     quantities=["T_surf", "c_surf", "inventory"],
     colors=colours,
     figsize=(6, 5))
@@ -45,8 +46,8 @@ plt.tight_layout()
 plt.colorbar(
     sm, label="Puff rate (s$^{-1}$)",
     ax=my_plot.axs)
-plt.savefig('Figures/WEST/inventory_along_divertor.pdf')
-plt.savefig('Figures/WEST/inventory_along_divertor.svg')
+plt.savefig('../Figures/WEST/inventory_along_divertor.pdf')
+plt.savefig('../Figures/WEST/inventory_along_divertor.svg')
 
 # #### plot contribution ions along divertor
 inventory_strike_point_inner = []
@@ -64,14 +65,15 @@ ratio_ions_private_zone = []
 integrated_inventories = []
 plt.figure()
 for i, filename in enumerate(filenames):
-
-    R, Z, arc_length, E_ion, E_atom, ion_flux, \
-        atom_flux, net_heat_flux, angles_ion, angles_atom, data = \
-        extract_data(filename)
-    T = 1.1e-4*net_heat_flux + 323
+    my_exp = Exposition(filename, filetype="WEST")
+    arc_length = my_exp.arc_length
+    T = 1.1e-4*my_exp.net_heat_flux + 323
     c_max, c_max_ions, c_max_atoms = compute_c_max(
-        T, E_ion, E_atom, angles_ion, angles_atom,
-        ion_flux, atom_flux, full_export=True)
+        T,
+        my_exp.E_ion, my_exp.E_atom,
+        my_exp.angles_ions, my_exp.angles_atoms,
+        my_exp.ion_flux, my_exp.atom_flux,
+        full_export=True)
     inventories, sigmas = compute_inventory(T, c_max, time=time)
     integrated_inventories.append(np.trapz(inventories, arc_length))
 
@@ -97,8 +99,8 @@ plt.colorbar(sm, label="Puff rate (s$^{-1}$)")
 plt.ylim(0, 1)
 plt.xlabel("Distance along divertor (m)")
 plt.ylabel("c surface (ions) / c surface")
-plt.savefig('Figures/WEST/ion_ratio_along_divertor.pdf')
-plt.savefig('Figures/WEST/ion_ratio_along_divertor.svg')
+plt.savefig('../Figures/WEST/ion_ratio_along_divertor.pdf')
+plt.savefig('../Figures/WEST/ion_ratio_along_divertor.svg')
 
 # #### plot inventory vs puffing rate
 
@@ -118,8 +120,8 @@ plt.ylabel("Divertor H inventory (H)")
 plt.ylim(bottom=0)
 plt.xlim(left=0)
 plt.tight_layout()
-plt.savefig('Figures/WEST/inventory_vs_puffing_rate.pdf')
-plt.savefig('Figures/WEST/inventory_vs_puffing_rate.svg')
+plt.savefig('../Figures/WEST/inventory_vs_puffing_rate.pdf')
+plt.savefig('../Figures/WEST/inventory_vs_puffing_rate.svg')
 
 # #### plot inventory at SPs and private zone
 plt.figure(figsize=(6.4, 3))
@@ -156,8 +158,8 @@ plt.ylabel("Inventory (H/m)")
 plt.ylim(bottom=0)
 plt.xlim(left=0)
 plt.tight_layout()
-plt.savefig('Figures/WEST/inventory_at_sp_and_private_zone.pdf')
-plt.savefig('Figures/WEST/inventory_at_sp_and_private_zone.svg')
+plt.savefig('../Figures/WEST/inventory_at_sp_and_private_zone.pdf')
+plt.savefig('../Figures/WEST/inventory_at_sp_and_private_zone.svg')
 
 # #### plot ions vs atoms
 fig, axs = plt.subplots(1, 3, sharey="row", sharex=True, figsize=(7, 3))
@@ -207,7 +209,7 @@ plt.ylim(bottom=0, top=1)
 plt.yticks(ticks=[0, 0.5, 1])
 # plt.xticks(ticks=[Ps[0], 2e21, Ps[-1]])
 plt.tight_layout()
-plt.savefig('Figures/WEST/ion_ratio_at_sp_and_private_zone.pdf')
-plt.savefig('Figures/WEST/ion_ratio_at_sp_and_private_zone.svg')
+plt.savefig('../Figures/WEST/ion_ratio_at_sp_and_private_zone.pdf')
+plt.savefig('../Figures/WEST/ion_ratio_at_sp_and_private_zone.svg')
 
 plt.show()
