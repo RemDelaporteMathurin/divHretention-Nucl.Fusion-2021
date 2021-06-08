@@ -5,12 +5,12 @@ from matplotlib.colors import Normalize
 
 from scipy.stats import linregress
 
-from main import process_file
+from divHretention import process_file
 
 times = np.logspace(4, 7, num=5)
 # fig, axs = plt.subplots(1, 2, sharey=True, figsize=(8, 3))
 plt.figure()
-folder = "data/exposure_conditions_divertor/ITER/"
+folder = "../data/exposure_conditions_divertor/ITER/"
 
 numbers = [
     2404,
@@ -48,10 +48,10 @@ colormap = cm.cividis
 sm = plt.cm.ScalarMappable(cmap=colormap, norm=Normalize(vmin=min(divertor_pressure), vmax=max(divertor_pressure)))
 
 filenames_inner = [
-    "data/exposure_conditions_divertor/ITER/{}/{}_inner_target.csv".format(number, number) for number in numbers
+    "../data/exposure_conditions_divertor/ITER/{}/{}_inner_target.csv".format(number, number) for number in numbers
     ]
 filenames_outer = [
-    "data/exposure_conditions_divertor/ITER/{}/{}_outer_target.csv".format(number, number) for number in numbers
+    "../data/exposure_conditions_divertor/ITER/{}/{}_outer_target.csv".format(number, number) for number in numbers
     ]
 
 
@@ -61,7 +61,7 @@ for file_inner, file_outer, pressure in zip(filenames_inner, filenames_outer, di
     for time in times:
         inventory = 0
         for filename in [file_inner, file_outer]:
-            res = process_file(filename, time=time)
+            res = process_file(filename, filetype="ITER", time=time)
             inventory += np.trapz(res.inventory, res.arc_length)
         inventories.append(inventory)
     plt.plot(times, inventories, marker="+", color=colormap((pressure - min(divertor_pressure))/max(divertor_pressure)))
