@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-from main import *
+from divHretention import *
 
 quantities = [
             "heat_flux",
@@ -9,20 +9,23 @@ quantities = [
             "ion_angle", "atom_angle",
             ]
 
-filename = "data/exposure_conditions_divertor/ITER/2398/2398_inner_target.csv"
+filename = "../data/exposure_conditions_divertor/ITER/2398/2398_inner_target.csv"
 
 plot_along_divertor(
     filenames=[filename],
+    filetypes="ITER",
     quantities=quantities)
 
-filename = "data/exposure_conditions_divertor/ITER/2398/2398_outer_target.csv"
+filename = "../data/exposure_conditions_divertor/ITER/2398/2398_outer_target.csv"
 plot_along_divertor(
     filenames=[filename],
+    filetypes="ITER",
     quantities=quantities)
 
-filename = "data/exposure_conditions_divertor/WEST/West-LSN-P2.5e+21-IP0.449MW.csv"
+filename = "../data/exposure_conditions_divertor/WEST/West-LSN-P2.5e+21-IP0.449MW.csv"
 plot_along_divertor(
     filenames=[filename],
+    filetypes="WEST",
     quantities=quantities)
 
 plt.show()
