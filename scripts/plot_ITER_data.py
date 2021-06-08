@@ -128,6 +128,7 @@ plt.savefig('../Figures/ITER/inventory_vs_divertor_pressure.svg')
 #     c_bounds=[1e20, 2e23])
 my_plot_inner = plot_along_divertor(
     filenames=filenames_inner,
+    filetypes="ITER",
     quantities=["T_surf", "c_surf", "inventory"],
     colors=colours,
     figsize=(6, 5))
@@ -141,6 +142,7 @@ plt.savefig('../Figures/ITER/inventory_along_inner_divertor.svg')
 
 my_plot_outer = plot_along_divertor(
     filenames=filenames_outer,
+    filetypes="ITER",
     quantities=["T_surf", "c_surf", "inventory"],
     colors=colours,
     figsize=(6, 5))
