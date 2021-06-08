@@ -1,9 +1,9 @@
 """
 This script has to be executed at the root of the directory
 """
-from main import extract_data, process_file, compute_c_max, compute_inventory
+from divHretention import process_file, compute_c_max, compute_inventory, \
+    plot_along_divertor, Exposition
 
-from main import plot_along_divertor
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.colors import Normalize
@@ -14,7 +14,7 @@ from scipy.stats import linregress
 plt.rc('text', usetex=True)
 plt.rc('font', family='serif', size=12)
 
-folder = "data/exposure_conditions_divertor/WEST/"
+folder = "../data/exposure_conditions_divertor/WEST/"
 input_powers = [
     0.449,
     1,
@@ -35,6 +35,7 @@ colours = [colormap((IP - min(input_powers))/max(input_powers)) for IP in input_
 # inventory at SPs
 my_plot = plot_along_divertor(
     filenames=filenames,
+    filetypes="WEST",
     quantities=["T_surf", "c_surf", "inventory"],
     figsize=(6, 5),
     colors=colours
@@ -43,8 +44,8 @@ plt.tight_layout()
 plt.colorbar(
     sm, label="Input power (MW)",
     ax=my_plot.axs)
-plt.savefig("Figures/WEST/inventory_along_divertor_input_power.pdf")
-plt.savefig("Figures/WEST/inventory_along_divertor_input_power.svg")
+plt.savefig("../Figures/WEST/inventory_along_divertor_input_power.pdf")
+plt.savefig("../Figures/WEST/inventory_along_divertor_input_power.svg")
 
 # plot integrated inventory in divertor
 plt.figure(figsize=(6.4, 2.5))
@@ -55,7 +56,7 @@ for puff_rate in [2.5e21, 4.44e21]:
 
     inventories = []
     for filename in filenames:
-        res = process_file(filename, time=time)
+        res = process_file(filename, filetype="WEST", time=time)
         inventory = np.trapz(res.inventory, res.arc_length)
         inventories.append(inventory)
 
@@ -78,8 +79,8 @@ plt.xlabel("Input power (MW)")
 plt.ylabel("Divertor H inventory (H)")
 plt.legend(loc="lower right")
 plt.tight_layout()
-plt.savefig("Figures/WEST/inventory_vs_input_power.pdf")
-plt.savefig("Figures/WEST/inventory_vs_input_power.svg")
+plt.savefig("../Figures/WEST/inventory_vs_input_power.pdf")
+plt.savefig("../Figures/WEST/inventory_vs_input_power.svg")
 
 # plot inventory at SPs
 fig, axs = plt.subplots(1, 1, figsize=(6.4, 3), sharey=True, sharex=True)
@@ -95,7 +96,7 @@ for i, puff_rate in enumerate([2.5e21, 4.44e21]):
     inventories_pz, sigmas_pz = [], []
 
     for filename in filenames:
-        res = process_file(filename, time=time)
+        res = process_file(filename, filetype="WEST", time=time)
         inner_sp_loc_index = np.where(np.abs(res.arc_length-0.20) < 0.005)[0][0]
         outer_sp_loc_index = np.where(np.abs(res.arc_length-0.36) < 0.005)[0][0]
         private_zone_sp_loc_index = np.where(np.abs(res.arc_length-0.28) < 0.005)[0][0]
@@ -136,8 +137,8 @@ plt.xlabel("Input power (MW)")
 plt.ylabel("Inventory (H m$^{-1}$)")
 plt.tight_layout()
 
-plt.savefig("Figures/WEST/inventory_at_sps_and_private_zone_vs_input_power.pdf")
-plt.savefig("Figures/WEST/inventory_at_sps_and_private_zone_vs_input_power.svg")
+plt.savefig("../Figures/WEST/inventory_at_sps_and_private_zone_vs_input_power.pdf")
+plt.savefig("../Figures/WEST/inventory_at_sps_and_private_zone_vs_input_power.svg")
 
 
 # #### plot ratios of ions
@@ -151,13 +152,14 @@ filenames = [
     for input_power in input_powers]
 
 for filename in filenames:
-    R, Z, arc_length, E_ion, E_atom, ion_flux, \
-        atom_flux, net_heat_flux, angles_ion, angles_atom, data = \
-        extract_data(filename)
-    T = 1.1e-4*net_heat_flux + 323
+    my_exp = Exposition(filename, filetype="WEST")
+    T = 1.1e-4*my_exp.net_heat_flux + 323
     c_max, c_max_ions, c_max_atoms = compute_c_max(
-        T, E_ion, E_atom, angles_ion, angles_atom,
-        ion_flux, atom_flux, full_export=True)
+        T,
+        my_exp.E_ion, my_exp.E_atom,
+        my_exp.angles_ions, my_exp.angles_atoms,
+        my_exp.ion_flux, my_exp.atom_flux,
+        full_export=True)
 
     inner_sp_loc_index = np.where(np.abs(res.arc_length-0.20) < 0.005)[0][0]
     outer_sp_loc_index = np.where(np.abs(res.arc_length-0.36) < 0.005)[0][0]
@@ -214,7 +216,7 @@ plt.xlim(left=input_powers[0], right=input_powers[-1])
 plt.ylim(bottom=0, top=1)
 plt.yticks(ticks=[0, 0.5, 1])
 plt.tight_layout()
-plt.savefig("Figures/WEST/ions_ratio_vs_input_power.pdf")
-plt.savefig("Figures/WEST/ions_ratio_vs_input_power.svg")
+plt.savefig("../Figures/WEST/ions_ratio_vs_input_power.pdf")
+plt.savefig("../Figures/WEST/ions_ratio_vs_input_power.svg")
 
 plt.show()
