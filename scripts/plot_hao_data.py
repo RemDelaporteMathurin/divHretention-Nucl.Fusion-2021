@@ -5,13 +5,14 @@ import re
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-from main import plot_Tc_map_with_subplots
+from divHretention import plot_Tc_map_with_subplots, compute_inventory, DEFAULT_TIME
 
 
 filenames = []
-folder = "data/exposure_conditions_divertor/WEST/"
+folder = "../data/exposure_conditions_divertor/WEST/"
 for f in os.listdir(folder):
-    filenames.append(folder + str(f))
+    if "West-LSN" in f:
+        filenames.append(folder + str(f))
 
 points = []
 for filename in filenames:
@@ -27,8 +28,12 @@ plt.xlabel("Puffing Rate (s$^{-1}$)")
 plt.ylabel("Input Power (MW)")
 plt.show()
 
+# trigger DEFAULT_TIME
+compute_inventory([300], [1e20], DEFAULT_TIME)
+
 my_plot = plot_Tc_map_with_subplots(
     filenames=filenames,
+    filetypes='WEST',
     T_bounds=[320, 510],
     c_bounds=[1e20, 2e23])
 plt.sca(my_plot.axs_bottom[1])
