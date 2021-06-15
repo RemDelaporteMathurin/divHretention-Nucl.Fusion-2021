@@ -1,7 +1,7 @@
 """
 This script has to be executed at the root of the directory
 """
-from divHretention import process_file, compute_c_max, compute_inventory, \
+from divHretention import compute_c_max, compute_inventory, \
     plot_along_divertor, Exposition
 import matplotlib.pyplot as plt
 import numpy as np

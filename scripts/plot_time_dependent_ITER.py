@@ -5,7 +5,7 @@ from matplotlib.colors import Normalize
 
 from scipy.stats import linregress
 
-from divHretention import process_file
+from divHretention import Exposition
 
 times = np.logspace(4, 7, num=5)
 # fig, axs = plt.subplots(1, 2, sharey=True, figsize=(8, 3))
@@ -61,7 +61,8 @@ for file_inner, file_outer, pressure in zip(filenames_inner, filenames_outer, di
     for time in times:
         inventory = 0
         for filename in [file_inner, file_outer]:
-            res = process_file(filename, filetype="ITER", time=time)
+            res = Exposition(filename, filetype="ITER")
+            res.compute_inventory(time)
             inventory += np.trapz(res.inventory, res.arc_length)
         inventories.append(inventory)
     plt.plot(times, inventories, marker="+", color=colormap((pressure - min(divertor_pressure))/max(divertor_pressure)))

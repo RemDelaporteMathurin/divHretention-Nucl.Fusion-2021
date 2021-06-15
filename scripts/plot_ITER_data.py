@@ -17,6 +17,8 @@ from scipy.interpolate import interp1d
 plt.rc('text', usetex=True)
 plt.rc('font', family='serif', size=12)
 
+divHretention.step_mb = 1
+
 numbers = [
     2404,
     2403,
@@ -64,11 +66,13 @@ filenames_outer = [
 res_inner, res_outer = [], []
 
 for filename in filenames_inner:
-    res = divHretention.process_file(filename, filetype="ITER")
+    res = divHretention.Exposition(filename, filetype="ITER")
+    res.compute_inventory(time)
     res_inner.append(res)
 
 for i, filename in enumerate(filenames_outer):
-    res = divHretention.process_file(filename, filetype="ITER")
+    res = divHretention.Exposition(filename, filetype="ITER")
+    res.compute_inventory(time)
     res_outer.append(res)
 
 # compute total inventory
@@ -188,7 +192,7 @@ for i, results in enumerate([res_inner, res_outer]):
     for res in results:
         sp_loc_index = np.where(res.temperature == res.temperature.max())[0][0]
         inventories.append(res.inventory[sp_loc_index])
-        sigmas.append(res.sigma_inv[sp_loc_index])
+        sigmas.append(res.stdev_inv[sp_loc_index])
     sigmas = np.array(sigmas)
     line, = plt.plot(divertor_pressure, inventories, label=labels[i], marker="+", color="tab:blue")
     plt.fill_between(

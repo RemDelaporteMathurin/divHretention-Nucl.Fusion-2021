@@ -5,7 +5,7 @@ from matplotlib.colors import Normalize
 
 from scipy.stats import linregress
 
-from divHretention import process_file
+from divHretention import Exposition
 
 times = np.logspace(5, 7, num=5)
 fig, axs = plt.subplots(1, 2, sharey=True, figsize=(8, 3))
@@ -33,7 +33,8 @@ for P in Ps:
     filename = folder + "West-LSN-P{:.1e}-IP{:.3}MW.csv".format(P, input_power)
     inventories = []
     for time in times:
-        res = process_file(filename, filetype="WEST", time=time)
+        res = Exposition(filename, filetype="WEST")
+        res.compute_inventory(time)
         inventory = np.trapz(res.inventory, res.arc_length)
         inventories.append(inventory)
     plt.plot(times, inventories, marker="+", color=colormap_puff_rate((P - min(Ps))/max(Ps)))
@@ -67,7 +68,8 @@ for IP in input_powers:
                 "West-LSN-P{:.1e}-IP{:.3f}MW.csv".format(puff_rate, IP)
     inventories = []
     for time in times:
-        res = process_file(filename, filetype="WEST", time=time)
+        res = Exposition(filename, filetype="WEST")
+        res.compute_inventory(time)
         inventory = np.trapz(res.inventory, res.arc_length)
         inventories.append(inventory)
     plt.plot(times, inventories, marker="+", color=colormap_ip((IP - min(input_powers))/max(input_powers)))

@@ -1,7 +1,7 @@
 """
 This script has to be executed at the root of the directory
 """
-from divHretention import process_file, compute_c_max, compute_inventory, \
+from divHretention import compute_c_max, compute_inventory, \
     plot_along_divertor, Exposition
 
 import matplotlib.pyplot as plt
@@ -56,7 +56,8 @@ for puff_rate in [2.5e21, 4.44e21]:
 
     inventories = []
     for filename in filenames:
-        res = process_file(filename, filetype="WEST", time=time)
+        res = Exposition(filename, filetype="WEST")
+        res.compute_inventory(time)
         inventory = np.trapz(res.inventory, res.arc_length)
         inventories.append(inventory)
 
@@ -96,7 +97,8 @@ for i, puff_rate in enumerate([2.5e21, 4.44e21]):
     inventories_pz, sigmas_pz = [], []
 
     for filename in filenames:
-        res = process_file(filename, filetype="WEST", time=time)
+        res = Exposition(filename, filetype="WEST")
+        res.compute_inventory(time)
         inner_sp_loc_index = np.where(np.abs(res.arc_length-0.20) < 0.005)[0][0]
         outer_sp_loc_index = np.where(np.abs(res.arc_length-0.36) < 0.005)[0][0]
         private_zone_sp_loc_index = np.where(np.abs(res.arc_length-0.28) < 0.005)[0][0]
@@ -105,9 +107,9 @@ for i, puff_rate in enumerate([2.5e21, 4.44e21]):
         inventories_outer_sp.append(res.inventory[outer_sp_loc_index])
         inventories_pz.append(res.inventory[private_zone_sp_loc_index])
 
-        sigmas_inner_sp.append(res.sigma_inv[inner_sp_loc_index])
-        sigmas_outer_sp.append(res.sigma_inv[outer_sp_loc_index])
-        sigmas_pz.append(res.sigma_inv[private_zone_sp_loc_index])
+        sigmas_inner_sp.append(res.stdev_inv[inner_sp_loc_index])
+        sigmas_outer_sp.append(res.stdev_inv[outer_sp_loc_index])
+        sigmas_pz.append(res.stdev_inv[private_zone_sp_loc_index])
 
     line_spi, = plt.plot(
         input_powers, inventories_inner_sp,
@@ -153,6 +155,7 @@ filenames = [
 
 for filename in filenames:
     my_exp = Exposition(filename, filetype="WEST")
+    res.compute_inventory(time)
     T = 1.1e-4*my_exp.net_heat_flux + 323
     c_max, c_max_ions, c_max_atoms = compute_c_max(
         T,
