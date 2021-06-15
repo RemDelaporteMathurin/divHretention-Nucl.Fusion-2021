@@ -44,12 +44,17 @@ plt.tight_layout()
 plt.colorbar(
     sm, label="Input power (MW)",
     ax=my_plot.axs)
+
+for ax in my_plot.axs:
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
 plt.savefig("../Figures/WEST/inventory_along_divertor_input_power.pdf")
 plt.savefig("../Figures/WEST/inventory_along_divertor_input_power.svg")
 
 # plot integrated inventory in divertor
 plt.figure(figsize=(6.4, 2.5))
-for puff_rate in [2.5e21, 4.44e21]:
+puff_rates = [2.5e21, 4.44e21]
+for puff_rate in puff_rates:
     filenames = [
         folder + "West-LSN-P{:.1e}-IP{:.3f}MW.csv".format(puff_rate, input_power)
         for input_power in input_powers]
@@ -80,6 +85,11 @@ plt.xlabel("Input power (MW)")
 plt.ylabel("Divertor H inventory (H)")
 plt.legend(loc="lower right")
 plt.tight_layout()
+
+ax = plt.gca()
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+
 plt.savefig("../Figures/WEST/inventory_vs_input_power.pdf")
 plt.savefig("../Figures/WEST/inventory_vs_input_power.svg")
 
@@ -88,7 +98,7 @@ fig, axs = plt.subplots(1, 1, figsize=(6.4, 3), sharey=True, sharex=True)
 labels = ["Inner strike point", "Outer strike point"]
 linestyles = ["solid", "dashed"]
 markers = ["+", "o"]
-for i, puff_rate in enumerate([2.5e21, 4.44e21]):
+for i, puff_rate in enumerate([puff_rates[0]]):
     filenames = [
         folder + "West-LSN-P{:.1e}-IP{:.3f}MW.csv".format(puff_rate, input_power)
         for input_power in input_powers]
@@ -128,17 +138,19 @@ for i, puff_rate in enumerate([2.5e21, 4.44e21]):
         color="tab:orange",
         linestyle=linestyles[i])
 
-    if i == 1:
-        plt.annotate("Inner strike point", (1.05*input_powers[-1], inventories_inner_sp[-1]), color=line_spi.get_color())
-        plt.annotate("Outer strike point", (1.05*input_powers[-1], inventories_outer_sp[-1]), color=line_spo.get_color())
+    if i == 0:
+        plt.annotate("Inner strike point", (1.05*input_powers[-1], inventories_inner_sp[-1]*1.1), color=line_spi.get_color())
+        plt.annotate("Outer strike point", (1.05*input_powers[-1], inventories_outer_sp[-1]*0.9), color=line_spo.get_color())
         plt.annotate("Private zone", (1.05*input_powers[-1], inventories_pz[-1]), color=line_pz.get_color())
 plt.ylim(bottom=0, top=1.1e22)
 plt.xlim(left=0, right=input_powers[-1] + 0.8)
-plt.legend(loc="upper left")
+# plt.legend(loc="upper left")
 plt.xlabel("Input power (MW)")
 plt.ylabel("Inventory (H m$^{-1}$)")
 plt.tight_layout()
-
+ax = plt.gca()
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
 plt.savefig("../Figures/WEST/inventory_at_sps_and_private_zone_vs_input_power.pdf")
 plt.savefig("../Figures/WEST/inventory_at_sps_and_private_zone_vs_input_power.svg")
 
