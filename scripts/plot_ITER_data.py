@@ -9,8 +9,8 @@ from matplotlib import cm
 from matplotlib.colors import Normalize
 
 import numpy as np
-from divHretention import plot_Tc_map_with_subplots, plot_along_divertor, \
-    Exposition, compute_c_max, compute_inventory
+from divHretention import plot_along_divertor, \
+    Exposition, compute_c_max
 import divHretention
 from scipy.interpolate import interp1d
 
@@ -66,12 +66,12 @@ filenames_outer = [
 res_inner, res_outer = [], []
 
 for filename in filenames_inner:
-    res = divHretention.Exposition(filename, filetype="ITER")
+    res = Exposition(filename, filetype="ITER")
     res.compute_inventory(time)
     res_inner.append(res)
 
 for i, filename in enumerate(filenames_outer):
-    res = divHretention.Exposition(filename, filetype="ITER")
+    res = Exposition(filename, filetype="ITER")
     res.compute_inventory(time)
     res_outer.append(res)
 
@@ -102,11 +102,11 @@ def compute_total_inventory(x_max='max'):
 inventories_IVT, inventories_OVT = compute_total_inventory()
 inventories = np.array(inventories_IVT) + np.array(inventories_OVT)
 plt.figure()
-line_tot, = plt.plot(divertor_pressure, inventories, marker="+", color="tab:brown")
-line_inner, = plt.plot(divertor_pressure, inventories_IVT, marker="+", color="tab:red")
+line_tot, = plt.plot(divertor_pressure, inventories, marker="+", color="tab:blue")
+line_inner, = plt.plot(divertor_pressure, inventories_IVT, marker="+", color="tab:blue")
 plt.fill_between(
     divertor_pressure, np.zeros(len(divertor_pressure)), inventories_IVT,
-    alpha=0.3, color=line_inner.get_color())
+    alpha=0.6, color=line_inner.get_color())
 plt.fill_between(
     divertor_pressure, inventories_IVT, inventories,
     alpha=0.3, color=line_tot.get_color())
@@ -115,8 +115,13 @@ plt.ylabel("Divertor H inventory (H)")
 
 plt.ylim(bottom=0)
 plt.xlim(left=divertor_pressure[0], right=divertor_pressure[-1] + 1.5)
-plt.annotate("IVT", (divertor_pressure[-1]+0.2, 0.4e22), color=line_inner.get_color(), weight="bold")
-plt.annotate("OVT", (divertor_pressure[-1]+0.2, 0.6e22), color=line_tot.get_color(), weight="bold")
+plt.annotate("Inner Target", (divertor_pressure[-1]-2, 2e21), color="white", weight="bold")
+plt.annotate("Outer Target", (divertor_pressure[-1]-2, 6e21), color="white", weight="bold")
+
+ax = plt.gca()
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+
 plt.savefig('../Figures/ITER/inventory_vs_divertor_pressure.pdf')
 plt.savefig('../Figures/ITER/inventory_vs_divertor_pressure.svg')
 
@@ -142,6 +147,11 @@ my_plot_inner.axs[0].annotate("IVT", (0.5, 800))
 plt.colorbar(
     sm, label="Divertor neutral pressure (Pa)",
     ax=my_plot_inner.axs)
+
+for ax in my_plot_inner.axs:
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
 plt.savefig('../Figures/ITER/inventory_along_inner_divertor.pdf')
 plt.savefig('../Figures/ITER/inventory_along_inner_divertor.svg')
 
@@ -156,6 +166,12 @@ my_plot_outer.axs[0].annotate("OVT", (0.5, 1500))
 plt.colorbar(
     sm, label="Divertor neutral pressure (Pa)",
     ax=my_plot_outer.axs)
+
+for ax in my_plot_outer.axs:
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+
 plt.savefig('../Figures/ITER/inventory_along_outer_divertor.pdf')
 plt.savefig('../Figures/ITER/inventory_along_outer_divertor.svg')
 
@@ -181,6 +197,11 @@ fig.colorbar(sm, label="Divertor neutral pressure (Pa)")
 plt.tight_layout()
 plt.subplots_adjust(wspace=0)
 plt.ylim(0, 1)
+
+ax = plt.gca()
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+
 plt.savefig('../Figures/ITER/cumulative_inventory.pdf')
 plt.savefig('../Figures/ITER/cumulative_inventory.svg')
 
@@ -207,6 +228,11 @@ plt.ylabel("H inventory (H m$^{-1}$)")
 plt.xlim(left=0, right=divertor_pressure[-1] + 4.5)
 plt.ylim(bottom=0)
 plt.tight_layout()
+
+ax = plt.gca()
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+
 plt.savefig('../Figures/ITER/inventory_at_strike_points.pdf')
 plt.savefig('../Figures/ITER/inventory_at_strike_points.svg')
 
@@ -214,7 +240,7 @@ plt.savefig('../Figures/ITER/inventory_at_strike_points.svg')
 ratios = [[], []]
 for i, results in enumerate([filenames_inner, filenames_outer]):
     for filename in results:
-        my_exp = divHretention.Exposition(filename, filetype="ITER")
+        my_exp = Exposition(filename, filetype="ITER")
 
         T = 1.1e-4*my_exp.net_heat_flux + 323
         c_max, c_max_ions, c_max_atoms = compute_c_max(
