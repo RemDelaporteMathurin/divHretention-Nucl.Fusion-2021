@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib import cm
 import numpy as np
 from scipy.stats import linregress
 
@@ -29,11 +30,14 @@ for angle in np.unique(data["theta_inc"]):
     # add jitter for better visualisation
     stdev_x = .0045 * (max(np.log10(energy)) - min(np.log10(energy)))
     stdev_y = .0045 * (max(R_p) - min(R_p))
+    offset = 50
+    colour = cm.Blues((angle + offset)/(90 + offset))
     plt.scatter(
         10**(np.log10(energy) + np.random.randn(len(energy)) * stdev_x),
         R_p + np.random.randn(len(R_p)) * stdev_y,
         label="{:.0f} °".format(angle),
-        alpha=0.6)
+        alpha=0.6,
+        color=colour)
 
 # add regression
 energy_all = data["Incident_energy"]
