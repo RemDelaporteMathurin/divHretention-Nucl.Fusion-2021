@@ -75,6 +75,8 @@ plt.yscale("log")
 plt.xlabel("Time (s)")
 plt.ylabel("PFU inventory (H)")
 plt.colorbar(sm, label="Divertor neutral pressure (Pa)")
+plt.savefig("../Figures/ITER/inventory_vs_time.pdf")
+plt.savefig("../Figures/ITER/inventory_vs_time.svg")
 
 # a, b
 fig, axs = plt.subplots(2, 1, sharex="col")
