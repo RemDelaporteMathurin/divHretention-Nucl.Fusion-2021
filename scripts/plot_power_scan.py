@@ -75,15 +75,17 @@ for puff_rate in puff_rates:
 
     plt.scatter(
         input_powers, inventories, marker="+",
-        label="{:.1e}".format(puff_rate) + " s$^{-1}$")
+        label="${:s}$".format(as_si(puff_rate, 1)) + " s$^{-1}$")
     res = linregress(np.log10(input_powers), np.log10(inventories))
-    ip_values = np.linspace(input_powers[0], input_powers[-1])
+    a = 10**res.intercept
+    b = res.slope
+    ip_values = np.logspace(-2, np.log10(input_powers[-1]*1.2))
     line, = plt.plot(
-        ip_values, 10**res.intercept*ip_values**res.slope,
+        ip_values, a*ip_values**b,
         linestyle="--")
     plt.annotate(
-        "${0:s}".format(as_si(10**res.intercept, 2)) + r"\mathrm{IP} ^{" + "{:.1f}".format(res.slope) + "}$",
-        (input_powers[-1] + 0.05, inventories[-1]),
+        "${0:s}".format(as_si(a, 2)) + r"\mathrm{IP} ^{" + "{:.1f}".format(b) + "}$",
+        (input_powers[-1]*1.2, a*(input_powers[-1]*1.2)**b),
         color=line.get_color()
     )
 plt.xlim(left=0, right=input_powers[-1] + 1)
