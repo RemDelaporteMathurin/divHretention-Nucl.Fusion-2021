@@ -75,6 +75,77 @@ for i, filename in enumerate(filenames_outer):
     res.compute_inventory(time)
     res_outer.append(res)
 
+# plot particle fluxes
+fig, (ax1, ax2) = plt.subplots(1, 2, sharey=True, figsize=[6.4, 4])
+
+for i, res in enumerate(res_inner):
+    flux_atm = res.atom_flux
+    flux_ion = res.ion_flux
+    arc_length = res.arc_length
+    ax1.plot(arc_length, flux_ion, color=colours[i])
+    ax2.plot(arc_length, flux_atm, color=colours[i])
+
+ax1.annotate("Ions", (0.6, 1e24))
+ax2.annotate("Atoms", (0.6, 1e24))
+
+ax1.set_xlabel("Distance along divertor (m)")
+ax2.set_xlabel("Distance along divertor (m)")
+ax1.set_ylabel("Particle flux (m$^{-2}$.s$^{-1}$)")
+plt.yscale("log")
+plt.tight_layout()
+plt.colorbar(
+    sm, label="Divertor neutral pressure (Pa)",
+    ax=ax2)
+plt.savefig('../Figures/ITER/fluxes_distribution.svg')
+plt.savefig('../Figures/ITER/fluxes_distribution.pdf')
+
+# plot integrated inventory
+fig, (ax1, ax2) = plt.subplots(1, 2, sharey=True, figsize=[6.4, 4])
+
+ax1.set_title("IVT")
+ax2.set_title("OVT")
+
+IVT_integrals_ion, IVT_integrals_atom = [], []
+for i, res in enumerate(res_inner):
+    flux_atm = res.atom_flux
+    flux_ion = res.ion_flux
+    arc_length = res.arc_length
+    IVT_integrals_ion.append(np.trapz(flux_ion, arc_length))
+    IVT_integrals_atom.append(np.trapz(flux_atm, arc_length))
+
+ax1.plot(divertor_pressure, IVT_integrals_ion)
+ax1.plot(divertor_pressure, IVT_integrals_atom, linestyle="dashed")
+
+OVT_integrals_ion, OVT_integrals_atom = [], []
+
+for i, res in enumerate(res_outer):
+    flux_atm = res.atom_flux
+    flux_ion = res.ion_flux
+    arc_length = res.arc_length
+    OVT_integrals_ion.append(np.trapz(flux_ion, arc_length))
+    OVT_integrals_atom.append(np.trapz(flux_atm, arc_length))
+ax2.plot(divertor_pressure, OVT_integrals_ion)
+ax2.plot(divertor_pressure, OVT_integrals_atom, linestyle="dashed")
+
+ax1.set_ylabel(r"$\int \varphi$ (m$^{-1}$ s$^{-1}$)")
+ax1.set_xlabel("Divertor neutral pressure (Pa)")
+ax2.set_xlabel("Divertor neutral pressure (Pa)")
+
+ax2.annotate(
+    "Ions", (divertor_pressure[-1], OVT_integrals_ion[-1]),
+    color="tab:blue")
+ax2.annotate(
+    "Atoms", (divertor_pressure[-1], OVT_integrals_atom[-1]),
+    color="tab:orange")
+ax2.spines['top'].set_visible(False)
+ax2.spines['right'].set_visible(False)
+ax1.spines['top'].set_visible(False)
+ax1.spines['right'].set_visible(False)
+plt.ylim(bottom=0)
+plt.tight_layout()
+plt.savefig('../Figures/ITER/integral_fluxes.svg')
+plt.savefig('../Figures/ITER/integral_fluxes.pdf')
+
 # compute total inventory
 def integrate_inventory(res, x_max='max'):
     inventory_interp = interp1d(res.arc_length, res.inventory)
@@ -99,24 +170,29 @@ def compute_total_inventory(x_max='max'):
 
 
 # ###### plot inventory vs divertor pressure
+N_cassettes = 54
+N_IVT = N_cassettes*16
+N_OVT = N_cassettes*22
+
 inventories_IVT, inventories_OVT = compute_total_inventory()
-inventories = np.array(inventories_IVT) + np.array(inventories_OVT)
+inventories_IVT, inventories_OVT = N_IVT*np.array(inventories_IVT), N_OVT*np.array(inventories_OVT)
+inventories_total = inventories_IVT + inventories_OVT
 plt.figure()
-line_tot, = plt.plot(divertor_pressure, inventories, marker="+", color="tab:blue")
+line_tot, = plt.plot(divertor_pressure, inventories_total, marker="+", color="tab:blue")
 line_inner, = plt.plot(divertor_pressure, inventories_IVT, marker="+", color="tab:blue")
 plt.fill_between(
     divertor_pressure, np.zeros(len(divertor_pressure)), inventories_IVT,
     alpha=0.6, color=line_inner.get_color())
 plt.fill_between(
-    divertor_pressure, inventories_IVT, inventories,
+    divertor_pressure, inventories_IVT, inventories_total,
     alpha=0.3, color=line_tot.get_color())
 plt.xlabel("Divertor neutral pressure (Pa)")
 plt.ylabel("Divertor H inventory (H)")
 
 plt.ylim(bottom=0)
 plt.xlim(left=divertor_pressure[0], right=divertor_pressure[-1] + 1.5)
-plt.annotate("Inner Target", (divertor_pressure[-1]-2, 2e21), color="white", weight="bold")
-plt.annotate("Outer Target", (divertor_pressure[-1]-2, 6e21), color="white", weight="bold")
+plt.annotate("Inner Target", (7, 2e24), color="white", weight="bold")
+plt.annotate("Outer Target", (7, 6e24), color="white", weight="bold")
 
 ax = plt.gca()
 ax.spines['top'].set_visible(False)
@@ -127,15 +203,6 @@ plt.savefig('../Figures/ITER/inventory_vs_divertor_pressure.svg')
 
 # ###### plot exposure conditions along divertor
 
-# my_plot = plot_Tc_map_with_subplots(
-#     filenames=filenames_inner,
-#     T_bounds=[320, 1200],
-#     c_bounds=[1e20, 2e23])
-
-# my_plot = plot_Tc_map_with_subplots(
-#     filenames=filenames_outer,
-#     T_bounds=[320, 1200],
-#     c_bounds=[1e20, 2e23])
 my_plot_inner = plot_along_divertor(
     filenames=filenames_inner,
     filetypes="ITER",
@@ -143,10 +210,10 @@ my_plot_inner = plot_along_divertor(
     colors=colours,
     figsize=(6, 5))
 plt.tight_layout()
-my_plot_inner.axs[0].annotate("IVT", (0.5, 800))
-plt.colorbar(
-    sm, label="Divertor neutral pressure (Pa)",
-    ax=my_plot_inner.axs)
+# my_plot_inner.axs[0].annotate("IVT", (0.5, 800))
+# plt.colorbar(
+#     sm, label="Divertor neutral pressure (Pa)",
+#     ax=my_plot_inner.axs)
 
 for ax in my_plot_inner.axs:
     ax.spines['top'].set_visible(False)
@@ -162,12 +229,13 @@ my_plot_outer = plot_along_divertor(
     colors=colours,
     figsize=(6, 5))
 plt.tight_layout()
-my_plot_outer.axs[0].annotate("OVT", (0.5, 1500))
+# my_plot_outer.axs[0].annotate("OVT", (0.5, 1500))
 plt.colorbar(
     sm, label="Divertor neutral pressure (Pa)",
     ax=my_plot_outer.axs)
 
 for ax in my_plot_outer.axs:
+    ax.set_ylabel("")
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
