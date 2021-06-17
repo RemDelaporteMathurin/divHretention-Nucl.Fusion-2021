@@ -11,6 +11,12 @@ import numpy as np
 from scipy.stats import linregress
 
 
+def as_si(x, ndp):
+    s = '{x:0.{ndp:d}e}'.format(x=x, ndp=ndp)
+    m, e = s.split('e')
+    return r'{m:s}\times 10^{{{e:d}}}'.format(m=m, e=int(e))
+
+
 plt.rc('text', usetex=True)
 plt.rc('font', family='serif', size=12)
 
@@ -53,6 +59,7 @@ plt.savefig("../Figures/WEST/inventory_along_divertor_input_power.svg")
 
 # plot integrated inventory in divertor
 plt.figure(figsize=(6.4, 2.5))
+N_PFU = 480
 puff_rates = [2.5e21, 4.44e21]
 for puff_rate in puff_rates:
     filenames = [
@@ -63,24 +70,24 @@ for puff_rate in puff_rates:
     for filename in filenames:
         res = Exposition(filename, filetype="WEST")
         res.compute_inventory(time)
-        inventory = np.trapz(res.inventory, res.arc_length)
+        inventory = N_PFU*np.trapz(res.inventory, res.arc_length)
         inventories.append(inventory)
 
     plt.scatter(
         input_powers, inventories, marker="+",
-        label="{:.1e}".format(puff_rate) + " mol s$^{-1}$")
-    res = linregress(input_powers, inventories)
+        label="{:.1e}".format(puff_rate) + " s$^{-1}$")
+    res = linregress(np.log10(input_powers), np.log10(inventories))
     ip_values = np.linspace(input_powers[0], input_powers[-1])
     line, = plt.plot(
-        ip_values, res.slope*ip_values + res.intercept,
+        ip_values, 10**res.intercept*ip_values**res.slope,
         linestyle="--")
     plt.annotate(
-        "{:.1e}".format(res.slope) + r"$\times IP + $" + "{:.1e}".format(res.intercept),
+        "${0:s}".format(as_si(10**res.intercept, 2)) + r"\mathrm{IP} ^{" + "{:.1f}".format(res.slope) + "}$",
         (input_powers[-1] + 0.05, inventories[-1]),
         color=line.get_color()
     )
 plt.xlim(left=0, right=input_powers[-1] + 1)
-plt.ylim(bottom=0, top=1.9e21)
+plt.ylim(bottom=0)
 plt.xlabel("Input power (MW)")
 plt.ylabel("Divertor H inventory (H)")
 plt.legend(loc="lower right")
@@ -123,7 +130,7 @@ for i, puff_rate in enumerate([puff_rates[0]]):
 
     line_spi, = plt.plot(
         input_powers, inventories_inner_sp,
-        label="{:.1e}".format(puff_rate) + " mol s$^{-1}$",
+        label="{:.1e}".format(puff_rate) + " s$^{-1}$",
         marker=markers[i],
         color="tab:blue",
         linestyle=linestyles[i])

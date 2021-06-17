@@ -12,6 +12,13 @@ from scipy.stats import linregress
 plt.rc('text', usetex=True)
 plt.rc('font', family='serif', size=12)
 
+
+def as_si(x, ndp):
+    s = '{x:0.{ndp:d}e}'.format(x=x, ndp=ndp)
+    m, e = s.split('e')
+    return r'{m:s}\times 10^{{{e:d}}}'.format(m=m, e=int(e))
+
+
 input_power = 0.449
 Ps = [
     4.4e20,
@@ -32,6 +39,7 @@ colours = [colormap((P - min(Ps))/max(Ps)) for P in Ps]
 
 filenames = ["../data/exposure_conditions_divertor/WEST/West-LSN-P{:.1e}-IP{:.3}MW.csv".format(P, input_power) for P in Ps]
 
+N_PFU = 480
 time = 1e7  # s
 # #### plot inventory along divertor
 
@@ -75,7 +83,7 @@ for i, filename in enumerate(filenames):
         my_exp.ion_flux, my_exp.atom_flux,
         full_export=True)
     inventories, sigmas = compute_inventory(T, c_max, time=time)
-    integrated_inventories.append(np.trapz(inventories, arc_length))
+    integrated_inventories.append(N_PFU*np.trapz(inventories, arc_length))
 
     line, = plt.plot(arc_length, c_max_ions/c_max, color=colours[i])
 
@@ -104,21 +112,26 @@ plt.savefig('../Figures/WEST/ion_ratio_along_divertor.svg')
 
 # #### plot inventory vs puffing rate
 
-res = linregress(Ps, integrated_inventories)
+res = linregress(np.log10(Ps), np.log10(integrated_inventories))
 
-puffin_rate_values = np.linspace(0.3e21, 5e21)
+puffin_rate_values = np.linspace(0, 5e21, num=200)
 
 plt.figure(figsize=(6.4, 2.5))
-line, = plt.plot(puffin_rate_values, res.intercept + puffin_rate_values*res.slope, linestyle="--")
+line, = plt.plot(puffin_rate_values, 10**res.intercept*puffin_rate_values**res.slope, linestyle="--")
 plt.annotate(
-    "{:.2f}".format(res.slope) + r"$\times p + $" + "{:.1e}".format(res.intercept),
-    (3e21, 0.6e21),
+    "${0:s}".format(as_si(10**res.intercept, 2)) + r"p ^ {" + "{:.1f}".format(res.slope) + "}$",
+    (3e21, 4.4e23),
     color=line.get_color())
 plt.scatter(Ps, integrated_inventories, marker="+")
 plt.xlabel("Puff rate (s$^{-1}$)")
 plt.ylabel("Divertor H inventory (H)")
 plt.ylim(bottom=0)
 plt.xlim(left=0)
+
+ax = plt.gca()
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+
 plt.tight_layout()
 plt.savefig('../Figures/WEST/inventory_vs_puffing_rate.pdf')
 plt.savefig('../Figures/WEST/inventory_vs_puffing_rate.svg')
@@ -158,6 +171,9 @@ plt.ylabel("Inventory (H/m)")
 plt.ylim(bottom=0)
 plt.xlim(left=0)
 plt.tight_layout()
+ax = plt.gca()
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
 plt.savefig('../Figures/WEST/inventory_at_sp_and_private_zone.pdf')
 plt.savefig('../Figures/WEST/inventory_at_sp_and_private_zone.svg')
 
