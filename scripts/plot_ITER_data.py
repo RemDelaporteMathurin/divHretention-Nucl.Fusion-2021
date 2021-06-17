@@ -175,7 +175,11 @@ N_IVT = N_cassettes*16
 N_OVT = N_cassettes*22
 
 inventories_IVT, inventories_OVT = compute_total_inventory()
-inventories_IVT, inventories_OVT = N_IVT*np.array(inventories_IVT), N_OVT*np.array(inventories_OVT)
+
+avogadro = 6.022e23
+inventories_IVT, inventories_OVT = \
+    N_IVT/avogadro*np.array(inventories_IVT), \
+    N_OVT/avogadro*np.array(inventories_OVT)
 inventories_total = inventories_IVT + inventories_OVT
 plt.figure()
 line_tot, = plt.plot(divertor_pressure, inventories_total, marker="+", color="tab:blue")
@@ -187,12 +191,12 @@ plt.fill_between(
     divertor_pressure, inventories_IVT, inventories_total,
     alpha=0.3, color=line_tot.get_color())
 plt.xlabel("Divertor neutral pressure (Pa)")
-plt.ylabel("Divertor H inventory (H)")
+plt.ylabel("Divertor H inventory (g)")
 
 plt.ylim(bottom=0)
 plt.xlim(left=divertor_pressure[0], right=divertor_pressure[-1] + 1.5)
-plt.annotate("Inner Target", (7, 2e24), color="white", weight="bold")
-plt.annotate("Outer Target", (7, 6e24), color="white", weight="bold")
+plt.annotate("Inner Target", (7, 2), color="white", weight="bold")
+plt.annotate("Outer Target", (7, 10), color="white", weight="bold")
 
 ax = plt.gca()
 ax.spines['top'].set_visible(False)
