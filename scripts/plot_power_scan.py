@@ -147,6 +147,26 @@ for i, puff_rate in enumerate([puff_rates[0]]):
         color="tab:orange",
         linestyle=linestyles[i])
 
+    sigmas_inner_sp = np.array(sigmas_inner_sp)
+    sigmas_outer_sp = np.array(sigmas_outer_sp)
+    sigmas_pz = np.array(sigmas_pz)
+
+    plt.fill_between(
+        input_powers,
+        10**(2*sigmas_inner_sp + np.log10(inventories_inner_sp)),
+        10**(-2*sigmas_inner_sp + np.log10(inventories_inner_sp)),
+        facecolor=line_spi.get_color(), alpha=0.3)
+    plt.fill_between(
+        input_powers,
+        10**(2*sigmas_outer_sp + np.log10(inventories_outer_sp)),
+        10**(-2*sigmas_outer_sp + np.log10(inventories_outer_sp)),
+        facecolor=line_spo.get_color(), alpha=0.3)
+    plt.fill_between(
+        input_powers,
+        10**(2*sigmas_pz + np.log10(inventories_pz)),
+        10**(-2*sigmas_pz + np.log10(inventories_pz)),
+        facecolor=line_pz.get_color(), alpha=0.3)
+
     if i == 0:
         plt.annotate("Inner strike point", (1.05*input_powers[-1], inventories_inner_sp[-1]*1.1), color=line_spi.get_color())
         plt.annotate("Outer strike point", (1.05*input_powers[-1], inventories_outer_sp[-1]*0.9), color=line_spo.get_color())
