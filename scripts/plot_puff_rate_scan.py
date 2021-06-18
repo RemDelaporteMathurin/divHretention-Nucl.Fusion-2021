@@ -54,6 +54,11 @@ plt.tight_layout()
 plt.colorbar(
     sm, label="Puff rate (s$^{-1}$)",
     ax=my_plot.axs)
+
+for ax in my_plot.axs:
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
 plt.savefig('../Figures/WEST/inventory_along_divertor.pdf')
 plt.savefig('../Figures/WEST/inventory_along_divertor.svg')
 
