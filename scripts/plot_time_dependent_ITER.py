@@ -94,8 +94,6 @@ plt.ylim(bottom=0)
 plt.xscale("log")
 plt.xlabel("Number of discharges")
 plt.ylabel("Additionnal inventory \n per shot (mg/shot)")
-plt.savefig("../Figures/ITER/inventory_vs_time.pdf")
-plt.savefig("../Figures/ITER/inventory_vs_time.svg")
 
 plt.colorbar(sm, label="Divertor neutral pressure (Pa)", ax=axs)
 # plt.tight_layout()
@@ -103,5 +101,6 @@ plt.colorbar(sm, label="Divertor neutral pressure (Pa)", ax=axs)
 for ax in axs:
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
-
+plt.savefig("../Figures/ITER/inventory_vs_time.pdf")
+plt.savefig("../Figures/ITER/inventory_vs_time.svg")
 plt.show()
