@@ -93,7 +93,7 @@ plt.sca(axs[1])
 plt.ylim(bottom=0)
 plt.xscale("log")
 plt.xlabel("Number of discharges")
-plt.ylabel("Additionnal inventory \n per shot (mg/shot)")
+plt.ylabel("Additionnal inventory \n per discharge (mg/discharge)")
 
 plt.colorbar(sm, label="Divertor neutral pressure (Pa)", ax=axs)
 # plt.tight_layout()
