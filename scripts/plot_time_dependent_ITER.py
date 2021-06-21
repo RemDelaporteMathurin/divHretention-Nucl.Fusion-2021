@@ -7,9 +7,14 @@ from scipy.stats import linregress
 
 from divHretention import Exposition
 
-times = np.logspace(4, 7, num=5)
-# fig, axs = plt.subplots(1, 2, sharey=True, figsize=(8, 3))
-plt.figure()
+
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif', size=12)
+
+times = np.concatenate((np.logspace(4, 5, num=12, endpoint=False), np.logspace(5, 7, num=10)))
+time_in_shots = times/400
+
+fig, axs = plt.subplots(2, 1, sharex=True, figsize=(6.4, 5))
 folder = "../data/exposure_conditions_divertor/ITER/"
 
 numbers = [
@@ -53,45 +58,45 @@ filenames_inner = [
 filenames_outer = [
     "../data/exposure_conditions_divertor/ITER/{}/{}_outer_target.csv".format(number, number) for number in numbers
     ]
-
-
+N_cassettes = 54
+N_IVT = N_cassettes*16
+N_OVT = N_cassettes*22
+avogadro = 6.022e23
 as_, bs_ = [], []
 for file_inner, file_outer, pressure in zip(filenames_inner, filenames_outer, divertor_pressure):
     inventories = []
     for time in times:
         inventory = 0
-        for filename in [file_inner, file_outer]:
+        for filename, N in zip([file_inner, file_outer], [N_IVT, N_OVT]):
             res = Exposition(filename, filetype="ITER")
             res.compute_inventory(time)
-            inventory += np.trapz(res.inventory, res.arc_length)
+            inventory += N*np.trapz(res.inventory, res.arc_length)
         inventories.append(inventory)
-    plt.plot(times, inventories, marker="+", color=colormap((pressure - min(divertor_pressure))/max(divertor_pressure)))
-    res = linregress(np.log10(times), np.log10(inventories))
-    as_.append(10**res.intercept)
-    bs_.append(res.slope)
-
+    inventories = np.array(inventories)/avogadro  # in g
+    plt.sca(axs[0])
+    plt.plot(time_in_shots, inventories, marker="+", color=colormap((pressure - min(divertor_pressure))/max(divertor_pressure)))
+    plt.sca(axs[1])
+    inv_dt = np.diff(inventories)/np.diff(time_in_shots)
+    inv_dt *= 1e3  # in mg
+    plt.plot(
+        time_in_shots[:-1], inv_dt,
+        color=colormap((pressure - min(divertor_pressure))/max(divertor_pressure)))
+plt.sca(axs[0])
 plt.xscale("log")
 plt.yscale("log")
-plt.xlabel("Time (s)")
-plt.ylabel("PFU inventory (H)")
-plt.colorbar(sm, label="Divertor neutral pressure (Pa)")
+plt.ylabel("Divertor \n inventory (g)")
+
+
+# plot additional inventory
+plt.sca(axs[1])
+
+plt.ylim(bottom=0)
+plt.xscale("log")
+plt.xlabel("Number of discharges")
+plt.ylabel("Additionnal inventory \n per shot (mg/shot)")
 plt.savefig("../Figures/ITER/inventory_vs_time.pdf")
 plt.savefig("../Figures/ITER/inventory_vs_time.svg")
 
-# a, b
-fig, axs = plt.subplots(2, 1, sharex="col")
-
-axs[0].plot(divertor_pressure, as_, marker="+")
-axs[1].plot(divertor_pressure, bs_, marker="+")
-
-
-axs[0].set_ylabel("a")
-axs[1].set_ylabel("b")
-axs[1].set_xlabel("Divertor neutral pressure (Pa)")
-
-axs[0].set_ylim(bottom=0)
-axs[1].set_ylim(bottom=0)
-
-axs[0].set_xlim(left=0)
-
+plt.colorbar(sm, label="Divertor neutral pressure (Pa)", ax=axs)
+# plt.tight_layout()
 plt.show()
