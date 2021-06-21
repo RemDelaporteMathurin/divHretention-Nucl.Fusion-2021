@@ -56,7 +56,7 @@ for angle in angles:
         alpha=0.6)
 
 plt.figure(1)
-plt.ylim(bottom=0)
+plt.ylim(bottom=0, top=1)
 plt.xscale("log")
 plt.xlabel("Incident energy (eV)")
 plt.ylabel("Reflection coefficient")
@@ -71,7 +71,7 @@ plt.savefig("../Figures/reflection_coeff.svg")
 
 plt.figure(2)
 plt.colorbar()
-plt.ylim(bottom=0)
+plt.ylim(bottom=0, top=1)
 plt.xlabel("Angle of incidence (°)")
 plt.ylabel("Reflection coefficient")
 ax = plt.gca()
