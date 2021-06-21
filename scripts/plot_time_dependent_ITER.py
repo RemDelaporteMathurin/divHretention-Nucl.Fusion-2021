@@ -99,4 +99,9 @@ plt.savefig("../Figures/ITER/inventory_vs_time.svg")
 
 plt.colorbar(sm, label="Divertor neutral pressure (Pa)", ax=axs)
 # plt.tight_layout()
+
+for ax in axs:
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
 plt.show()
