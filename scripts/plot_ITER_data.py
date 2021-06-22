@@ -239,7 +239,7 @@ plt.colorbar(
     ax=my_plot_outer.axs)
 
 for ax in my_plot_outer.axs:
-    ax.set_ylabel("")
+    # ax.set_ylabel("")
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
@@ -349,8 +349,8 @@ axs[1].fill_between(
 axs[0].set_title("ISP")
 axs[1].set_title("OSP")
 
-axs[0].annotate("Ions", (3, 0.3), color="white", weight="bold")
-axs[0].annotate("Atoms", (3.4, 0.5), color="white", weight="bold")
+axs[0].annotate("Ions", (3, 0.5), color="white", weight="bold")
+axs[0].annotate("Atoms", (3.4, 0.7), color="white", weight="bold")
 axs[1].annotate("Ions", (3.4, 0.55), color="white", weight="bold")
 axs[1].annotate("Atoms", (5, 0.7), color="white", weight="bold")
 

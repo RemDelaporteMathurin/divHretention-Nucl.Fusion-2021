@@ -251,9 +251,7 @@ axs[1].set_title("OSP", color=line_spo.get_color())
 axs[2].set_title("Private zone", color=line_pz.get_color())
 
 
-axs[0].set_xlabel("Input power (MW)")
 axs[1].set_xlabel("Input power (MW)")
-axs[2].set_xlabel("Input power (MW)")
 axs[0].set_ylabel(r"$c_{\mathrm{surface}, \mathrm{ions}} / c_\mathrm{surface}$")
 
 plt.xlim(left=input_powers[0], right=input_powers[-1])
