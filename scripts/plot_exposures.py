@@ -11,10 +11,14 @@ quantities = [
 
 filename = "../data/exposure_conditions_divertor/ITER/2398/2398_inner_target.csv"
 
-plot_along_divertor(
+my_plot = plot_along_divertor(
     filenames=[filename],
     filetypes="ITER",
     quantities=quantities)
+
+for ax in my_plot.axs:
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
 
 filename = "../data/exposure_conditions_divertor/ITER/2398/2398_outer_target.csv"
 plot_along_divertor(
