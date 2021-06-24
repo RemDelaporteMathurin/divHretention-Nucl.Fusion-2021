@@ -76,7 +76,7 @@ for puff_rate in puff_rates:
 
     plt.scatter(
         input_powers, inventories, marker="+",
-        label="${:s}$".format(as_si(puff_rate, 1)) + " s$^{-1}$")
+        label="${:s}$".format(as_si(puff_rate, 1)) + " molecule s$^{-1}$")
     res = linregress(np.log10(input_powers), np.log10(inventories))
     a = 10**res.intercept
     b = res.slope
@@ -133,7 +133,7 @@ for i, puff_rate in enumerate([puff_rates[0]]):
 
     line_spi, = plt.plot(
         input_powers, inventories_inner_sp,
-        label="{:.1e}".format(puff_rate) + " s$^{-1}$",
+        label="{:.1e}".format(puff_rate) + " molecule s$^{-1}$",
         marker=markers[i],
         color="tab:blue",
         linestyle=linestyles[i])
