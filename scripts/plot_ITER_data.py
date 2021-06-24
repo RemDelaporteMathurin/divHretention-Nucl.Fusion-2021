@@ -223,6 +223,7 @@ for ax in my_plot_inner.axs:
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
+my_plot_inner.axs[-1].get_legend().remove()
 plt.savefig('../Figures/ITER/inventory_along_inner_divertor.pdf')
 plt.savefig('../Figures/ITER/inventory_along_inner_divertor.svg')
 
@@ -244,6 +245,7 @@ for ax in my_plot_outer.axs:
     ax.spines['right'].set_visible(False)
 
 
+my_plot_outer.axs[-1].get_legend().remove()
 plt.savefig('../Figures/ITER/inventory_along_outer_divertor.pdf')
 plt.savefig('../Figures/ITER/inventory_along_outer_divertor.svg')
 

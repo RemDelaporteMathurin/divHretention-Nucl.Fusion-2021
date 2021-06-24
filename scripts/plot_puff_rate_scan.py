@@ -59,6 +59,7 @@ for ax in my_plot.axs:
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
+my_plot.axs[-1].get_legend().remove()
 plt.savefig('../Figures/WEST/inventory_along_divertor.pdf')
 plt.savefig('../Figures/WEST/inventory_along_divertor.svg')
 
