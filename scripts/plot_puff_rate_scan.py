@@ -218,13 +218,15 @@ axs[0].set_title("ISP", color=line_spi.get_color())
 axs[1].set_title("OSP", color=line_spo.get_color())
 axs[2].set_title("Private zone", color=line_pz.get_color())
 
-axs[0].annotate("Ions", (3e21, 0.5), color="white", weight="bold")
-axs[0].annotate("Atoms", (3.4e21, 0.6), color="white", weight="bold")
-axs[1].annotate("Ions", (3e21, 0.4), color="white", weight="bold")
-axs[1].annotate("Atoms", (3.4e21, 0.5), color="white", weight="bold")
+colour_ions = "tab:blue"
+colour_atoms = "tab:orange"
+axs[0].annotate(r"\textbf{Ions}", (3e21, 0.5), color=colour_ions, weight="bold")
+axs[0].annotate(r"\textbf{Atoms}", (3.4e21, 0.6), color=colour_atoms, weight="bold")
+axs[1].annotate(r"\textbf{Ions}", (3e21, 0.4), color=colour_ions, weight="bold")
+axs[1].annotate(r"\textbf{Atoms}", (3.4e21, 0.5), color=colour_atoms, weight="bold")
 
-# axs[2].annotate("Ions", (0.5e21, 0.1), color="white", weight="bold")
-axs[2].annotate("Atoms", (1e21, 0.5), color="white", weight="bold")
+# axs[2].annotate("Ions", (0.5e21, 0.1), color="grey", weight="bold")
+axs[2].annotate(r"\textbf{Atoms}", (1e21, 0.5), color=colour_atoms, weight="bold")
 
 plt.sca(axs[0])
 plt.xlim(left=Ps[0], right=Ps[-1])

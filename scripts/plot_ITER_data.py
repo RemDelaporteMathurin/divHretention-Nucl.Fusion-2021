@@ -195,8 +195,8 @@ plt.ylabel("Divertor H inventory (g)")
 
 plt.ylim(bottom=0)
 plt.xlim(left=divertor_pressure[0], right=divertor_pressure[-1] + 1.5)
-plt.annotate("Inner Target", (7, 2), color="white", weight="bold")
-plt.annotate("Outer Target", (7, 10), color="white", weight="bold")
+plt.annotate(r"\textbf{Inner Target}", (7, 2), color="tab:blue", weight="bold")
+plt.annotate(r"\textbf{Outer Target}", (7, 10), color="tab:blue", weight="bold")
 
 ax = plt.gca()
 ax.spines['top'].set_visible(False)
@@ -327,32 +327,33 @@ for i, results in enumerate([filenames_inner, filenames_outer]):
         ratios[i].append(c_max_ions[inner_sp_loc_index]/c_max[inner_sp_loc_index])
 
 fig, axs = plt.subplots(1, 2, sharey="row", sharex=True, figsize=(5.5, 3))
-
+colour_ions = "tab:blue"
+colour_atoms = "tab:orange"
 ratio_ions_inner_sp = ratios[0]
 line_spi, = axs[0].plot(divertor_pressure, ratio_ions_inner_sp, marker="+", color="tab:blue")
 axs[0].fill_between(
     divertor_pressure, np.zeros(len(divertor_pressure)), ratio_ions_inner_sp,
-    facecolor='tab:blue', alpha=0.3)
+    facecolor=colour_ions, alpha=0.3)
 axs[0].fill_between(
     divertor_pressure, np.zeros(len(divertor_pressure)) + 1, ratio_ions_inner_sp,
-    facecolor='tab:orange', alpha=0.3)
+    facecolor=colour_atoms, alpha=0.3)
 
 ratio_ions_outer_sp = ratios[1]
 line_spo, = axs[1].plot(divertor_pressure, ratio_ions_outer_sp, marker="+", color="tab:blue")
 axs[1].fill_between(
     divertor_pressure, np.zeros(len(divertor_pressure)), ratio_ions_outer_sp,
-    facecolor='tab:blue', alpha=0.3)
+    facecolor=colour_ions, alpha=0.3)
 axs[1].fill_between(
     divertor_pressure, np.zeros(len(divertor_pressure)) + 1, ratio_ions_outer_sp,
-    facecolor='tab:orange', alpha=0.3)
+    facecolor=colour_atoms, alpha=0.3)
 
 axs[0].set_title("ISP")
 axs[1].set_title("OSP")
 
-axs[0].annotate("Ions", (3, 0.5), color="white", weight="bold")
-axs[0].annotate("Atoms", (3.4, 0.7), color="white", weight="bold")
-axs[1].annotate("Ions", (3.4, 0.55), color="white", weight="bold")
-axs[1].annotate("Atoms", (5, 0.7), color="white", weight="bold")
+axs[0].annotate(r"\textbf{Ions}", (3, 0.5), color=colour_ions, weight="bold")
+axs[0].annotate(r"\textbf{Atoms}", (3.4, 0.7), color=colour_atoms, weight="bold")
+axs[1].annotate(r"\textbf{Ions}", (3.4, 0.55), color=colour_ions, weight="bold")
+axs[1].annotate(r"\textbf{Atoms}", (5, 0.7), color=colour_atoms, weight="bold")
 
 
 plt.sca(axs[0])

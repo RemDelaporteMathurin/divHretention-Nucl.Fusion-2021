@@ -214,37 +214,42 @@ for filename in filenames:
     ratio_ions_private_zone.append(c_max_ions[private_zone_sp_loc_index]/c_max[private_zone_sp_loc_index])
 
 fig, axs = plt.subplots(1, 3, sharey=True, sharex=True, figsize=(7, 3))
-
+colour_ions = "tab:blue"
+colour_atoms = "tab:orange"
 line_spo, = axs[0].plot(input_powers, ratio_ions_inner_sp, marker="+", color="tab:blue")
 axs[0].fill_between(
     input_powers, np.zeros(len(input_powers)), ratio_ions_inner_sp,
-    facecolor='tab:blue', alpha=0.3)
+    facecolor=colour_ions, alpha=0.3)
 axs[0].fill_between(
     input_powers, np.zeros(len(input_powers)) + 1, ratio_ions_inner_sp,
-    facecolor='tab:orange', alpha=0.3)
-axs[0].annotate("Atoms", (0.5, 0.8), color="white", weight="bold")
-axs[0].annotate("Ions", (0.6, 0.55), color="white", weight="bold")
+    facecolor=colour_atoms, alpha=0.3)
+
+
+axs[0].annotate(r"\textbf{Atoms}", (0.5, 0.8), color=colour_atoms, weight="bold")
+axs[0].annotate(r"\textbf{Ions}", (0.6, 0.55), color=colour_ions, weight="bold")
 
 line_spo, = axs[1].plot(input_powers, ratio_ions_outer_sp, marker="+", color="tab:blue")
 axs[1].fill_between(
     input_powers, np.zeros(len(input_powers)), ratio_ions_outer_sp,
-    facecolor='tab:blue', alpha=0.3)
+    facecolor=colour_ions, alpha=0.3)
 axs[1].fill_between(
     input_powers, np.zeros(len(input_powers)) + 1, ratio_ions_outer_sp,
-    facecolor='tab:orange', alpha=0.3)
-axs[1].annotate("Atoms", (0.5, 0.8), color="white", weight="bold")
-axs[1].annotate("Ions", (0.6, 0.5), color="white", weight="bold")
+    facecolor=colour_atoms, alpha=0.3)
+
+
+axs[1].annotate(r"\textbf{Atoms}", (0.5, 0.8), color=colour_atoms, weight="bold")
+axs[1].annotate(r"\textbf{Ions}", (0.6, 0.5), color=colour_ions, weight="bold")
 
 
 line_pz, = axs[2].plot(input_powers, ratio_ions_private_zone, marker="+", color="tab:orange")
 axs[2].fill_between(
     input_powers, np.zeros(len(input_powers)), ratio_ions_private_zone,
-    facecolor='tab:blue', alpha=0.3)
+    facecolor=colour_ions, alpha=0.3)
 axs[2].fill_between(
     input_powers, np.zeros(len(input_powers)) + 1, ratio_ions_private_zone,
-    facecolor='tab:orange', alpha=0.3)
+    facecolor=colour_atoms, alpha=0.3)
 # axs[2].annotate("Ions", (0.5, 0.1), color="white", weight="bold")
-axs[2].annotate("Atoms", (0.5, 0.3), color="white", weight="bold")
+axs[2].annotate(r"\textbf{Atoms}", (0.5, 0.3), color=colour_atoms, weight="bold")
 
 axs[0].set_title("ISP", color=line_spi.get_color())
 axs[1].set_title("OSP", color=line_spo.get_color())
