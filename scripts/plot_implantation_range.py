@@ -49,7 +49,7 @@ b = res.slope
 x = np.logspace(0, np.log10(2e3))
 plt.plot(x, a*x**b, linestyle="dashed")
 
-annotation = "$" + "{:.2f}".format(a) + "x ^ {" + "{:.2f}".format(b) + "}$"
+annotation = "$" + "{:.2f}".format(a) + " E ^ {" + "{:.2f}".format(b) + "}$"
 plt.annotate(annotation, (x[-1], a*x[-1]**b), color="tab:blue")
 
 plt.ylim(bottom=0)
