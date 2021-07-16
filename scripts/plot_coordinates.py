@@ -29,7 +29,8 @@ plt.plot(IVT_x, IVT_y, color="tab:red")
 plt.plot(OVT_x, OVT_y, color="tab:red")
 plt.plot(
     sep_x, sep_y, color="tab:grey",
-    linestyle="dashed", label="Seperatrix")
+    linestyle="dashed")
+plt.annotate("Seperatrix", (5, 2.5), color="tab:grey")
 plt.xlabel("R(m)")
 plt.ylabel("Z(m)")
 
@@ -43,16 +44,16 @@ sep_y = data["primary_separatrix_y"]
 plt.sca(axs[0])
 plt.plot(fw_x, fw_y, color="tab:grey")
 plt.plot(sep_x, sep_y, color="tab:grey", linestyle="dashed")
-plt.plot(fw_x[-12:-10], fw_y[-12:-10], color="tab:red", label="Targets")
-plt.annotate('IVT', (3.5, -3), color="tab:red")
+plt.plot(fw_x[-12:-10], fw_y[-12:-10], color="tab:red")
+plt.annotate('IVT', (3.4, -3), color="tab:red")
 plt.annotate('OVT', (6, -4), color="tab:red")
 plt.annotate('WEST', (2, 1.37), color="tab:grey")
 plt.annotate('ITER', (4.7, 4.9), color="tab:grey")
 plt.scatter(
     [4.1443, 5.56815], [-3.597, -4.283],
-    facecolor='none', edgecolor="tab:red", label="Strike points", zorder=3)
+    facecolor='none', edgecolor="tab:red", zorder=3)
 plt.ylim(top=5.5)
-plt.legend()
+# plt.legend()
 
 plt.sca(axs[1])
 axs[1].yaxis.tick_right()
@@ -61,6 +62,8 @@ axs[1].set_aspect('equal')
 plt.plot(fw_x, fw_y, color="tab:grey")
 plt.plot(sep_x, sep_y, color="tab:grey", linestyle="dashed")
 plt.plot(fw_x[-12:-10], fw_y[-12:-10], color="tab:red")
+plt.plot(fw_x[-14:-12], fw_y[-14:-12], color="tab:blue")
+
 plt.scatter(
     [2.146, 2.25255], [-0.678, -0.7205],
     facecolor='none', edgecolor="tab:red", zorder=3)
