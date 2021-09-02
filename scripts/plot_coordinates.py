@@ -62,7 +62,7 @@ axs[1].set_aspect('equal')
 plt.plot(fw_x, fw_y, color="tab:grey")
 plt.plot(sep_x, sep_y, color="tab:grey", linestyle="dashed")
 plt.plot(fw_x[-12:-10], fw_y[-12:-10], color="tab:red")
-plt.plot(fw_x[-14:-12], fw_y[-14:-12], color="tab:blue")
+plt.plot(fw_x[-14:-12], fw_y[-14:-12], color="tab:blue", linewidth=3)
 
 plt.scatter(
     [2.146, 2.25255], [-0.678, -0.7205],
