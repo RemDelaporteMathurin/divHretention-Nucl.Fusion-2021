@@ -212,7 +212,7 @@ my_plot_inner = plot_along_divertor(
     filetypes="ITER",
     quantities=["T_surf", "c_surf", "inventory"],
     colors=colours,
-    figsize=(6, 5))
+    figsize=(6*0.7, 5))
 plt.tight_layout()
 # my_plot_inner.axs[0].annotate("IVT", (0.5, 800))
 # plt.colorbar(
