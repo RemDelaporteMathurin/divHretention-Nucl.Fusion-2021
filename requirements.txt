@@ -1,1 +1,3 @@
 divHretention == 1.0
+numpy
+matplotlib
