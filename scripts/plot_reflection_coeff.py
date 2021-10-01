@@ -1,3 +1,7 @@
+"""
+Figure 2b
+"""
+
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 from matplotlib import cm

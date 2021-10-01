@@ -1,3 +1,6 @@
+"""
+Figure 3
+"""
 import matplotlib.pyplot as plt
 from divHretention import plot_Tc_map_with_subplots, compute_inventory
 from matplotlib import cm

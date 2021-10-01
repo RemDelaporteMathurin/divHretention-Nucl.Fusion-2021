@@ -1,5 +1,5 @@
 """
-This script has to be executed at the root of the directory
+Figures 13, 14, 15
 """
 
 import re

@@ -1,5 +1,5 @@
 """
-This script has to be executed at the root of the directory
+Figures 4, 6, 7
 """
 from divHretention import compute_c_max, compute_inventory, \
     plot_along_divertor, Exposition
