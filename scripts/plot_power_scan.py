@@ -35,8 +35,11 @@ filenames = [
 time = 1e7  # s
 
 colormap = cm.inferno
-sm = plt.cm.ScalarMappable(cmap=colormap, norm=Normalize(vmin=min(input_powers), vmax=max(input_powers)))
-colours = [colormap((IP - min(input_powers))/max(input_powers)) for IP in input_powers]
+offset_max = 0.5  # used to avoid having bright yellow for maximum value
+norm = Normalize(vmin=min(input_powers), vmax=max(input_powers) + offset_max)
+sm = plt.cm.ScalarMappable(cmap=colormap, norm=norm)
+
+colours = [colormap(norm(IP)) for IP in input_powers]
 
 # inventory at SPs
 my_plot = plot_along_divertor(
